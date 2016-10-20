@@ -1,6 +1,5 @@
 package org.usfirst.frc832.Leatherback.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc832.Leatherback.Robot;
 

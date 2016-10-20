@@ -16,7 +16,7 @@ public class RhinoDrive extends Subsystem {
     private final PowerDistributionPanel pDP = RobotMap.rhinoDrivePDP;
     private final CANTalon left1 = RobotMap.rhinoDriveLeft1;
     private final CANTalon right1 = RobotMap.rhinoDriveRight1;
-    private final RobotDrive tank = RobotMap.rhinoDrivetank;
+    private final RobotDrive tank = RobotMap.rhinoDriveTank;
     private final CANTalon left2 = RobotMap.rhinoDriveLeft2;
     private final CANTalon right2 = RobotMap.rhinoDriveRight2;
 
@@ -30,6 +30,21 @@ public class RhinoDrive extends Subsystem {
     
     public void takeJoystickInputs(double left, double right) {
     	tank.tankDrive(left, right);
+    }
+    
+    public void setSetpoint(double left, double right) {
+    	left1.setSetpoint(left);
+    	right1.setSetpoint(-right);
+    }
+    
+    public void setPositionMode() {
+    	left1.changeControlMode(CANTalon.TalonControlMode.Position);
+    	right1.changeControlMode(CANTalon.TalonControlMode.Position);
+    }
+    
+    public void setVbusMode() {
+    	left1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+    	right1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
     }
     
     public void stop() {

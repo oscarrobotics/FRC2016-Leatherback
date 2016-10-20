@@ -1,7 +1,6 @@
 package org.usfirst.frc832.Leatherback.commands;
 
 import org.usfirst.frc832.Leatherback.Robot;
-import org.usfirst.frc832.Leatherback.RobotMap;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 

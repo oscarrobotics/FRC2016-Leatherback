@@ -10,7 +10,12 @@ import edu.wpi.first.wpilibj.buttons.*;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-    public Joystick driverPad;
+    public Joystick driverPad;  
+    public JoystickButton flashlightRightTrig;
+    public JoystickButton alignMe;
+    
+    
+    public Joystick buttonPanel;
     public JoystickButton wheelsOut;
     public JoystickButton wheelsIn;
     public JoystickButton dPadUp;
@@ -21,14 +26,17 @@ public class OI {
     public JoystickButton armDownButton;
     public JoystickButton rollerSuckIn;
     public JoystickButton rollerSpitOut;
-    public JoystickButton flashlightToggle;
-    
-    public JoystickButton flashlightRightTrig;
-
-    public Joystick buttonPanel;
+    public JoystickButton stopWheels;
 
     public OI() {
 
+    	driverPad = new Joystick(0);
+    	
+        flashlightRightTrig = new JoystickButton(driverPad, 6);
+        flashlightRightTrig.whileHeld(new LightToggle());
+        alignMe = new JoystickButton(driverPad, 1); // IDK what button 1 is
+    	alignMe.whileHeld(new AlignToTarget());
+        
         buttonPanel = new Joystick(1);
         
         armDownButton = new JoystickButton(buttonPanel, 7);
@@ -47,18 +55,12 @@ public class OI {
         wheelsIn.whileHeld(new FullBallIn());
         wheelsOut = new JoystickButton(buttonPanel, 12);
         wheelsOut.whileHeld(new SpitOut());
-       // wheelsOut.whenReleased(new Stop_Wheels());
-        driverPad = new Joystick(0);
         rollerSuckIn = new JoystickButton(buttonPanel, 1);
         rollerSuckIn.whileHeld(new Wheels_VBus());
         rollerSpitOut = new JoystickButton(buttonPanel, 13);
         rollerSpitOut.whileHeld(new Manual_RollerOut());
-        flashlightToggle = new JoystickButton(buttonPanel, 3);
-        flashlightToggle.whileHeld(new Stop_Wheels());
-        
-        flashlightRightTrig = new JoystickButton(driverPad, 6);
-        flashlightRightTrig.whileHeld(new LightToggle());
-        // SmartDashboard Buttons
+        stopWheels = new JoystickButton(buttonPanel, 3);
+        stopWheels.whileHeld(new Stop_Wheels());
     }
 
     public Joystick getDriverPad() {

@@ -5,10 +5,6 @@ import edu.wpi.first.wpilibj.CANTalon;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-
-/**
- *
- */
 public class Arm extends Subsystem {
     private final CANTalon motor = RobotMap.armMotor;
 

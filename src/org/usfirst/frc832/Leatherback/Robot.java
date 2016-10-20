@@ -1,12 +1,13 @@
 package org.usfirst.frc832.Leatherback;
 
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc832.Leatherback.commands.*;
@@ -57,6 +58,14 @@ public class Robot extends IterativeRobot {
     }
     
     public void sendData() {
+    	//double[] defaultValue = new double[0];
+    	double area = RobotMap.visionTable.getNumber("area", 0.0);
+    	double centerX = RobotMap.visionTable.getNumber("centerX", 0.0);
+    	double centerY = RobotMap.visionTable.getNumber("centerY", 0.0);
+    	SmartDashboard.putNumber("centerX", centerX);
+    	SmartDashboard.putNumber("centerY", centerY);
+    	SmartDashboard.putNumber("area", area);
+    	SmartDashboard.putNumber("GyroVal", RobotMap.gyro.getAngle());
     	SmartDashboard.putNumber("Throttle", Robot.bPAD.getThrottle());
     	SmartDashboard.putNumber("IntakeRPM", Robot.bPAD.getIntakeRPM());
     	SmartDashboard.putNumber("OutputRPM", Robot.bPAD.getActualOutputRPM());
@@ -64,6 +73,12 @@ public class Robot extends IterativeRobot {
     	SmartDashboard.putNumber("Left Shooter RPM", Robot.bPAD.getLeftRPM());
     	SmartDashboard.putNumber("Right Shooter RPM", Robot.bPAD.getRightRPM());
     	SmartDashboard.putNumber("Combined Shooter RPM", Robot.bPAD.getBothAverageRPM());
+    	try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public void disabledInit(){

@@ -2,7 +2,6 @@ package org.usfirst.frc832.Leatherback.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc832.Leatherback.Robot;
-import org.usfirst.frc832.Leatherback.RobotMap;
 
 /**
  *
@@ -19,7 +18,7 @@ public class SpitOut extends Command {
     protected void execute() {
     	//Robot.bPAD.setToVBus();
     	Robot.bPAD.setToSpeed();
-        double targetSpeed = -8200;
+        double targetSpeed = -8500;
         Robot.bPAD.setWheelSpeed(targetSpeed, targetSpeed);
     }
 
@@ -28,7 +27,7 @@ public class SpitOut extends Command {
     }
 
     protected void end() {
-    	//Robot.bPAD.setToVBus();
+    	Robot.bPAD.setToVBus();
     	Robot.bPAD.stopWheels();
     }
 
