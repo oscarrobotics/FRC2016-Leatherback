@@ -56,7 +56,7 @@ public class OI {
         wheelsOut = new JoystickButton(buttonPanel, 12);
         wheelsOut.whileHeld(new SpitOut());
         rollerSuckIn = new JoystickButton(buttonPanel, 1);
-        rollerSuckIn.whileHeld(new Wheels_VBus());
+        rollerSuckIn.whileHeld(new Manual_RollerIn());
         rollerSpitOut = new JoystickButton(buttonPanel, 13);
         rollerSpitOut.whileHeld(new Manual_RollerOut());
         stopWheels = new JoystickButton(buttonPanel, 3);

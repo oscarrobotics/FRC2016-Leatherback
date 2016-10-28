@@ -17,7 +17,7 @@ public class SuckIn extends Command {
 
     protected void execute() {
     	Robot.bPAD.setToSpeed();
-    	double targetSpeed = 7800;
+    	double targetSpeed = 6500;
     	Robot.bPAD.setWheelSpeed(targetSpeed, targetSpeed);
     }
 

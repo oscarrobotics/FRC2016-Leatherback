@@ -31,10 +31,12 @@ public class Wheels_VBus extends Command {
     // Called once after isFinished returns true
     protected void end() {
     	Robot.bPAD.setToSpeed();
+    	Robot.bPAD.stopWheels();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     protected void interrupted() {
+    	end();
     }
 }

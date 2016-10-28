@@ -1,14 +1,14 @@
 package org.usfirst.frc832.Leatherback;
 
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 import org.usfirst.frc832.Leatherback.commands.*;
 import org.usfirst.frc832.Leatherback.subsystems.*;
@@ -35,6 +35,13 @@ public class Robot extends IterativeRobot {
     public static ArmRoller armRoller;
     public static LightControl lightControl;
 
+    /*
+    double[] idealValue = {319, 239};
+	double centerX = RobotMap.visionTable.getNumber("centerX", -1.0);
+	double offsetX = centerX - idealValue[0];
+	int driveAdjustment = 500;
+    */
+    
     public void robotInit() {
     	
     /*	cam1 = CameraServer.getInstance();
@@ -57,14 +64,21 @@ public class Robot extends IterativeRobot {
         autonomousCommand = new AutonomousCommand();
     }
     
+    
+ // Get data from SmartDashboard for tuning and testing. Comment out references to it during competitiion
+    public void getData() { 
+    	double test1 = RobotMap.prefs.getDouble("test1", -1); // No idea if this will do anything
+    }
+    
     public void sendData() {
-    	//double[] defaultValue = new double[0];
-    	double area = RobotMap.visionTable.getNumber("area", 0.0);
-    	double centerX = RobotMap.visionTable.getNumber("centerX", 0.0);
-    	double centerY = RobotMap.visionTable.getNumber("centerY", 0.0);
+    	double area = RobotMap.visionTable.getNumber("area", -1.0); // second parameter is -1 to signify no data.
+    	double centerX = RobotMap.visionTable.getNumber("centerX", -1.0);
+    	double centerY = RobotMap.visionTable.getNumber("centerY", -1.0);
+    	double offsetX = centerX - 319;
     	SmartDashboard.putNumber("centerX", centerX);
     	SmartDashboard.putNumber("centerY", centerY);
     	SmartDashboard.putNumber("area", area);
+    	SmartDashboard.putNumber("offsetX", offsetX);
     	SmartDashboard.putNumber("GyroVal", RobotMap.gyro.getAngle());
     	SmartDashboard.putNumber("Throttle", Robot.bPAD.getThrottle());
     	SmartDashboard.putNumber("IntakeRPM", Robot.bPAD.getIntakeRPM());
@@ -73,15 +87,10 @@ public class Robot extends IterativeRobot {
     	SmartDashboard.putNumber("Left Shooter RPM", Robot.bPAD.getLeftRPM());
     	SmartDashboard.putNumber("Right Shooter RPM", Robot.bPAD.getRightRPM());
     	SmartDashboard.putNumber("Combined Shooter RPM", Robot.bPAD.getBothAverageRPM());
-    	try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	SmartDashboard.putBoolean("BallSwitch", RobotMap.ballControlSwitch.get());
     }
     
-    public void disabledInit(){
+    public void disabledInit() {
     	Robot.ballControl.setLED(0);
     	Robot.ballControl.setRelay(0);
     	Robot.bPAD.stopWheels();
@@ -104,18 +113,16 @@ public class Robot extends IterativeRobot {
     public void autonomousPeriodic() {
         Scheduler.getInstance().run();
         sendData();
+        // Zero Encoders if they hit the switches
         if (!RobotMap.shooterTiltMotors.isRevLimitSwitchClosed()) RobotMap.shooterTiltMotors.setEncPosition(0);
     	if (RobotMap.armMotor.isRevLimitSwitchClosed()) RobotMap.armMotor.setEncPosition(0);
-    	if (RobotMap.ballControlSwitch.get()) //&& (!oi.wheelsOut.get())) 
-    	{
+    	if (RobotMap.ballControlSwitch.get()) {
     		Robot.ballControl.setRelay(0);
     		Robot.ballControl.setLED(0);
-    		//Robot.bPAD.setWheelSpeed(50, 50);
     	}
     	else if (!RobotMap.ballControlSwitch.get()) {
     		Robot.ballControl.setRelay(2);
     		Robot.ballControl.setLED(1);
-    		//Robot.bPAD.setWheelSpeed(30, 30);
     	}
     	if (15 > Robot.bPAD.getRightAmps() || (15 > Robot.bPAD.getLeftAmps())) Robot.bPAD.stopWheels();
     }
@@ -123,13 +130,13 @@ public class Robot extends IterativeRobot {
     public void teleopInit() {
         if (autonomousCommand != null) autonomousCommand.cancel();
     }
-
+    
     public void teleopPeriodic() {
     	if (!RobotMap.shooterTiltMotors.isRevLimitSwitchClosed()) RobotMap.shooterTiltMotors.setEncPosition(0);
     	if (RobotMap.armMotor.isRevLimitSwitchClosed()) RobotMap.armMotor.setEncPosition(0);
-    	if (RobotMap.ballControlSwitch.get()) 
-    	{
-    		Robot.ballControl.setRelay(0);
+    	if (RobotMap.ballControlSwitch.get()) {
+    		//Robot.ballControl.setRelay(0);
+    		RobotMap.ballControlMotor.set(Relay.Value.kOff);
     		Robot.ballControl.setLED(1);
     	}
     	else if (!RobotMap.ballControlSwitch.get()) {
@@ -139,6 +146,31 @@ public class Robot extends IterativeRobot {
     	if (15 > Robot.bPAD.getRightAmps() || (15 > Robot.bPAD.getLeftAmps())) Robot.bPAD.stopWheels();
     	Scheduler.getInstance().run();
         sendData();
+        /*
+        if (Robot.oi.driverPad.getRawButton(1) && centerX != -1) {
+        	
+        	RobotMap.rhinoDriveLeft1.changeControlMode(CANTalon.TalonControlMode.Position);
+        	RobotMap.rhinoDriveLeft2.changeControlMode(CANTalon.TalonControlMode.Position);
+        	RobotMap.rhinoDriveRight1.changeControlMode(CANTalon.TalonControlMode.Position);
+        	RobotMap.rhinoDriveRight2.changeControlMode(CANTalon.TalonControlMode.Position);
+        	
+        	if (offsetX > -4 && offsetX < 4) {
+        		Robot.rhinoDrive.stop(); // It's time to STOP
+        	} // NO MORE
+        	
+        	else if (offsetX < -5) {
+        		//RobotMap.rhinoDriveLeft1.setSetpoint(RobotMap.rhinoDriveLeft1.getPosition() + driveAdjustment); // Nudge the robot a little to the left
+        		//RobotMap.rhinoDriveRight1.setSetpoint(RobotMap.rhinoDriveRight1.getPosition() + driveAdjustment);
+        		RobotMap.rhinoDriveTank.tankDrive(0.7, -0.7);
+        	}
+        	
+        	else if(offsetX > 5) { // if centerX is at or above 320 (target to right of center)
+        		//RobotMap.rhinoDriveLeft1.setSetpoint(RobotMap.rhinoDriveLeft1.getPosition() - driveAdjustment); // Nudge the robot a little to the right
+        		//RobotMap.rhinoDriveRight1.setSetpoint(RobotMap.rhinoDriveRight1.getPosition() - driveAdjustment);
+        		RobotMap.rhinoDriveTank.tankDrive(-0.7, 0.7);
+        	}
+        }
+        */
     }
 
     public void testPeriodic() {

@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -37,6 +38,7 @@ public class RobotMap {
     public static SpeedController armRollerMotor;
     public static AnalogGyro gyro;
     public static NetworkTable visionTable;
+    public static Preferences prefs;
 
     public static void init() {
     	//DO NOT CHANGE VALUES BETWEEN THESE COMMENTS <
@@ -49,6 +51,8 @@ public class RobotMap {
     	double rampRateShooter = 50;				// Ramp rate for Shooter PID
     	//DO NOT CHANGE VALUES BETWEEN THESE COMMENTS >
     	double rampRate = 70;					// Ramp rate for DriveTrain
+    	
+    	prefs = Preferences.getInstance();
     	
     	gyro = new AnalogGyro(0); // assign 'gyro' to Analog Channel 0
     	gyro.calibrate(); // Calibrate gyro
@@ -104,6 +108,8 @@ public class RobotMap {
     	shooterTiltMotors.setAllowableClosedLoopErr(30);
     	shooterTiltMotors.configNominalOutputVoltage(+0.0f, -0.0f);
     	shooterTiltMotors.configPeakOutputVoltage(+12.0f, -12.0f);
+    	//shooterTiltMotors.setSetpoint(0.0);
+    	shooterTiltMotors.setEncPosition(0);
     	
     	
     	// Drive PID Settings
@@ -113,6 +119,12 @@ public class RobotMap {
     	rhinoDriveLeft1.configNominalOutputVoltage(+0.0f, -0.0f);
     	rhinoDriveLeft1.configPeakOutputVoltage(+12.0f, -12.0f);
     	rhinoDriveLeft1.setP(0.3); // test this
+    	rhinoDriveLeft2.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+    	rhinoDriveLeft2.reverseSensor(false);
+    	rhinoDriveLeft2.setAllowableClosedLoopErr(50);
+    	rhinoDriveLeft2.configNominalOutputVoltage(+0.0f, -0.0f);
+    	rhinoDriveLeft2.configPeakOutputVoltage(+12.0f, -12.0f);
+    	rhinoDriveLeft2.setP(0.3); // test this
     	//rhinoDriveLeft1.setPID(p, i, d);
     	//rhinoDriveLeft1.setF(f);
     	//rhinoDriveLeft1.setCloseLoopRampRate(rampRate);
@@ -122,6 +134,12 @@ public class RobotMap {
     	rhinoDriveRight1.configNominalOutputVoltage(+0.0f, -0.0f);
     	rhinoDriveRight1.configPeakOutputVoltage(+12.0f, -12.0f);
     	rhinoDriveRight1.setP(0.3); // test this
+    	rhinoDriveRight2.setFeedbackDevice(FeedbackDevice.QuadEncoder);
+    	rhinoDriveRight2.reverseSensor(true);
+    	rhinoDriveRight2.setAllowableClosedLoopErr(50);
+    	rhinoDriveRight2.configNominalOutputVoltage(+0.0f, -0.0f);
+    	rhinoDriveRight2.configPeakOutputVoltage(+12.0f, -12.0f);
+    	rhinoDriveRight2.setP(0.3); // test this
     	
     	//rhinoDriveRight1.setPID(p, i, d);
     	//rhinoDriveRight1.setF(f);
@@ -129,9 +147,9 @@ public class RobotMap {
     	
         // Drive Follower code
         rhinoDriveRight2.changeControlMode(CANTalon.TalonControlMode.Follower);
-        rhinoDriveRight2.set(rhinoDriveRight1.getDeviceID());
+        rhinoDriveRight2.set(6);
         rhinoDriveLeft2.changeControlMode(CANTalon.TalonControlMode.Follower);
-        rhinoDriveLeft2.set(rhinoDriveLeft1.getDeviceID());
+        rhinoDriveLeft2.set(5);
         
         // Arm PID settings
         armMotor.setFeedbackDevice(FeedbackDevice.QuadEncoder);

@@ -1,7 +1,9 @@
 package org.usfirst.frc832.Leatherback.commands;
 
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc832.Leatherback.Robot;
+import org.usfirst.frc832.Leatherback.RobotMap;
 
 /**
  *
@@ -17,7 +19,8 @@ public class BallOut extends Command {
     protected void execute() {
     	//if (Robot.bPAD.getBothAverageRPM() > 1000){
     		//Timer.delay(3);
-    		Robot.ballControl.setRelay(1);	
+    	RobotMap.ballControlMotor.setDirection(Relay.Direction.kForward);
+		RobotMap.ballControlMotor.set(Relay.Value.kOn);	
     	//}
     	
     }
