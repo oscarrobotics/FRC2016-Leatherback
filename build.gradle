@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2019.2.1"
+    id "edu.wpi.first.GradleRIO" version "2019.4.1"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -42,17 +42,21 @@ def includeDesktopSupport = true
 
 // Maven central needed for JUnit
 repositories {
+    mavenLocal()
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
     compile wpi.deps.wpilib()
-    compile wpi.deps.vendor.java()
+    wpi.deps.vendor.loadFrom(project(':GrouchLib'))
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+    compile project(':GrouchLib')
     testCompile 'junit:junit:4.12'
+    compile 'com.github.Oblarg:command-rewrite-jitpack:1.5.1'
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')

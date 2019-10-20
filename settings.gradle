@@ -23,3 +23,6 @@ pluginManagement {
         }
     }
 }
+
+rootProject.name='FRC2016-Leatherback'
+include 'GrouchLib'
